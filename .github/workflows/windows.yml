@@ -1,0 +1,33 @@
+
+name: PC Virtual Windows
+
+on:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 360
+
+    steps:
+      - name: Conectar ao Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTH_KEY }}
+          hostname: pc-virtual-windows
+
+      - name: Verificar Windows
+        shell: pwsh
+        run: |
+          Write-Host "PC Virtual iniciado!"
+          Get-ComputerInfo |
+            Select-Object WindowsProductName, WindowsVersion
+          Write-Host "Status do Tailscale:"
+          tailscale status
+
+      - name: Manter ambiente ativo
+        shell: pwsh
+        run: |
+          Write-Host "Ambiente temporario em execucao."
+          Start-Sleep -Seconds 60
+          
